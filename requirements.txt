@@ -1,0 +1,11 @@
+Flask==2.3.2
+opencv-python-headless==4.8.0.74
+matplotlib==3.8.0
+numpy==1.24.3
+imageai
+opencv-python
+torch
+tensorflow
+torch
+torchvision
+torchaudio
