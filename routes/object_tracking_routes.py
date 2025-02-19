@@ -12,17 +12,16 @@ object_tracking_bp = Blueprint("object_tracking", __name__)
 # Constants and directory setup
 UPLOAD_FOLDER = 'uploads'
 OUTPUT_FOLDER = 'processed'
-MODEL_FOLDER = 'models'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 # Load YOLO model and classes
 net = cv2.dnn.readNetFromDarknet(
-    os.path.join(MODEL_FOLDER, "yolov4.cfg"),
-    os.path.join(MODEL_FOLDER, "yolov4.weights")
+    os.path.join("yolov4.cfg"),
+    os.path.join("yolov4.weights")
 )
 
-with open(os.path.join(MODEL_FOLDER, "classes.txt"), "r") as f:
+with open(os.path.join("classes.txt"), "r") as f:
     class_names = [line.strip() for line in f.readlines()]
 
 # Store task information
