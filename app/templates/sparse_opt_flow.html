@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sparse Optical Flow</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sparse_opt_flow.css') }}">
+</head>
+<body>
+
+    <!-- Navbar at the Top Right -->
+    <nav class="navbar">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/model1" class="nav-link">Image Processing</a>
+        <a href="/model2" class="nav-link">Object Detection</a>
+        <a href="/model3" class="nav-link">Object Tracking</a>
+        <a href="/model4" class="nav-link active">Sparse Flow</a>
+        <a href="/model5" class="nav-link">Dense Flow</a>
+    </nav>
+    
+    <div class="container">
+        <h1>SPARSE OPTICAL FLOW</h1>
+        <div class="card">
+            <form id="uploadForm">
+                <div class="upload-area">
+                    <label for="videoFile" class="file-label">
+                        <span class="icon">📁</span>
+                        <span>Choose video or drag here</span>
+                        <input type="file" id="videoFile" accept="video/*" required>
+                    </label>
+                </div>
+                <div class="button-group">
+                    <button type="submit" class="btn primary">Process Video</button>
+                    <button type="button" id="clearButton" class="btn secondary">Clear</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Processing Status</h2>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div id="progressBar" class="progress"></div>
+                </div>
+                <p id="progressText">Waiting for upload...</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Download Processed Video</h2>
+            <a id="downloadLink" class="btn primary" download style="display: none;">Download Processed Video</a>
+        </div>
+
+        <div class="card">
+            <h2>Processing Logs</h2>
+            <pre id="logOutput"></pre>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 VisionX. All Rights Reserved.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/sparse_opt_flow.js') }}"></script>
+</body>
+</html>
