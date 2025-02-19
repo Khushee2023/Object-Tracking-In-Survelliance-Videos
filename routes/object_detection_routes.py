@@ -24,7 +24,7 @@ def process_video(task_id, input_path, output_path, confidence):
 
         video_detector = VideoObjectDetection()
         video_detector.setModelTypeAsTinyYOLOv3()
-        video_detector.setModelPath("models/tiny-yolov3.pt")
+        video_detector.setModelPath("tiny-yolov3.pt")
         video_detector.loadModel()
 
         def per_frame_function(frame_number, output_array, output_count):
