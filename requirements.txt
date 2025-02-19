@@ -6,7 +6,6 @@ imageai
 opencv-python
 torch
 tensorflow
-torch
 torchvision
 torchaudio
 flask_socketio
