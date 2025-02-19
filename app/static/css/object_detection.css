@@ -1,0 +1,261 @@
+:root {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --accent: #6366f1;
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0a0;
+    --error: #ef4444;
+    --success: #22c55e;
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.card {
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+h1, h2 {
+    color: var(--accent);
+    margin-top: 0;
+}
+
+.upload-area {
+    border: 2px dashed var(--accent);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.file-label {
+    display: block;
+    cursor: pointer;
+}
+
+.file-label input {
+    display: none;
+}
+
+.icon {
+    font-size: 24px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.slider-container {
+    margin-bottom: 20px;
+}
+
+input[type="range"] {
+    width: 100%;
+    background: var(--bg-primary);
+    height: 8px;
+    border-radius: 4px;
+    outline: none;
+}
+
+.btn {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: opacity 0.2s;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+.btn.secondary {
+    background-color: var(--error);
+}
+
+.progress-container {
+    margin-top: 20px;
+}
+
+.progress-bar {
+    background-color: var(--bg-primary);
+    border-radius: 4px;
+    height: 20px;
+    overflow: hidden;
+}
+
+.progress {
+    background-color: var(--accent);
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+video {
+    width: 100%;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+#downloadLink {
+    display: none;
+    text-decoration: none;
+    text-align: center;
+}
+
+#logOutput {
+    background-color: var(--bg-primary);
+    padding: 16px;
+    border-radius: 6px;
+    font-family: monospace;
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+/* Navbar Styling */
+.navbar {
+    display: flex;
+    justify-content: flex-end; /* Aligns the links to the right */
+    background-color: transparent; /* No background color for navbar */
+    padding: 10px 20px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1;
+}
+
+.navbar .nav-link {
+    color: white; /* Set text color to white */
+    text-decoration: none;
+    font-size: 16px;
+    margin: 0 15px;
+    transition: opacity 0.3s;
+}
+
+.navbar .nav-link:hover {
+    opacity: 0.7;
+}
+
+.navbar .nav-link.active {
+    font-weight: bold;
+    color: #ff6a00; /* Accent color */
+}
+
+/* Other Styles */
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.card {
+    background-color: #2d2d2d;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Header and Title Styling */
+.header {
+    text-align: center;
+    padding: 20px;
+    background-color: #1a1a1a;
+    color: #fff;
+}
+
+.header .studio-title h1 {
+    color: #00b0ff; /* Neon Blue */
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.header .studio-title p {
+    color: #a0a0a0;
+    font-size: 18px;
+}
+
+/* Navbar Styling */
+.navbar {
+    display: flex;
+    justify-content: flex-end; /* Aligns the links to the right */
+    background-color: transparent; /* No background color for navbar */
+    padding: 10px 20px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1;
+}
+
+.navbar .nav-link {
+    color: white; /* Set text color to white */
+    text-decoration: none;
+    font-size: 16px;
+    margin: 0 15px;
+    transition: opacity 0.3s;
+}
+
+.navbar .nav-link:hover {
+    opacity: 0.7;
+}
+
+.navbar .nav-link.active {
+    font-weight: bold;
+    color: #6366f1; /* Accent color */
+}
+
+/* Other Styles */
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.card {
+    background-color: #2d2d2d;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* File upload, progress bar, and other elements styling will remain as before */
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 1rem 0;
+    background-color: #121817;
+    color: #888;
+}
+
