@@ -24,6 +24,5 @@ def onboarding():
     return render_template('onboarding.html')
 
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))  # Render ka PORT assign karega
-    app.run(host="0.0.0.0", port=port, debug=True)  # Publicly accessible hoga
-
+    port = int(os.environ.get("PORT", 10000))  
+    app.run(host="0.0.0.0", port=port, threaded=True)  
