@@ -17,8 +17,8 @@ os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 # Load YOLO model and classes
 net = cv2.dnn.readNetFromDarknet(
-    os.path.join("yolov4.cfg"),
-    os.path.join("yolov4.weights")
+    os.path.join("yolov4-tiny.cfg"),
+    os.path.join("yolov4-tiny.weights")
 )
 
 with open(os.path.join("classes.txt"), "r") as f:
