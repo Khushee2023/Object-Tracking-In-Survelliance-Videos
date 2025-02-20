@@ -11,4 +11,4 @@ torchaudio
 flask_socketio
 flask_sock
 flask-cors
-gunicorn
+
