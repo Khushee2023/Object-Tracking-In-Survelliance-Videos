@@ -19,15 +19,6 @@ def onboarding():
     return render_template('onboarding.html')
 
 if __name__ == '__main__':
-    import signal
-    import sys
-
-    def graceful_exit(signal, frame):
-        print("Shutting down gracefully...")
-        sys.exit(0)
-
-    signal.signal(signal.SIGTERM, graceful_exit)
-
     port = int(os.environ.get("PORT", 10000))
+    print(f"🔥 Running on port {port}")  # Debugging print
     app.run(host='0.0.0.0', port=port)
-
