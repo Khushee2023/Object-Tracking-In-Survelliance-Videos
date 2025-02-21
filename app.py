@@ -24,5 +24,15 @@ def onboarding():
     return render_template('onboarding.html')
 
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 10000))  # Default port is 10000 if PORT is not set
-    app.run(host='0.0.0.0', port=port, debug=True)
+    import signal
+    import sys
+
+    def graceful_exit(signal, frame):
+        print("Shutting down gracefully...")
+        sys.exit(0)
+
+    signal.signal(signal.SIGTERM, graceful_exit)
+
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host='0.0.0.0', port=port)
+
