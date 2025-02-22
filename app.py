@@ -6,7 +6,8 @@ from routes.object_tracking_routes import object_tracking_bp
 from routes.sparse_opt_flow_routes import sparse_opt_flow_bp
 from routes.dense_opt_flow_routes import dense_opt_flow_bp
 
-app = Flask(__name__, template_folder='app/templates', static_folder='app/static')
+app = Flask(__name__, template_folder="app/templates", static_folder="app/static", static_url_path="/static")
+
 
 app.register_blueprint(image_processing_bp, url_prefix='/model1')
 app.register_blueprint(object_detection_bp, url_prefix='/model2')
