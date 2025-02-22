@@ -2,81 +2,66 @@ from flask import Blueprint, request, jsonify, render_template, send_from_direct
 import os
 import cv2
 import numpy as np
-from werkzeug.utils import secure_filename
-import uuid
+import torch
 import threading
+import uuid
 import math
+from models.experimental import attempt_load
+from utils.general import non_max_suppression, scale_coords
+from utils.torch_utils import select_device
 
 object_tracking_bp = Blueprint("object_tracking", __name__)
 
-# Constants and directory setup
+# Directories
 UPLOAD_FOLDER = 'uploads'
 OUTPUT_FOLDER = 'processed'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
-# Load YOLO model and classes
-net = cv2.dnn.readNetFromDarknet(
-    os.path.join("yolov4-tiny.cfg"),
-    os.path.join("yolov4-tiny.weights")
-)
+# Load YOLOv4-Tiny Model
+device = select_device('cpu')  # Use 'cuda' for GPU
+model = attempt_load("yolov4-tiny.pt", map_location=device)
+model.eval()
 
-with open(os.path.join("classes.txt"), "r") as f:
+# Load class names
+with open("classes.txt", "r") as f:
     class_names = [line.strip() for line in f.readlines()]
 
-# Store task information
+# Task storage
 tasks = {}
 
-def detect_objects(frame, conf_threshold, nms_threshold):
-    """Detect objects in a frame using YOLO."""
-    blob = cv2.dnn.blobFromImage(frame, 1/255.0, (416, 416), swapRB=True, crop=False)
-    net.setInput(blob)
+def detect_objects(frame, conf_threshold=0.5, nms_threshold=0.4):
+    """Detect objects using YOLOv4-Tiny .pt model."""
+    img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    img = torch.from_numpy(img).float().to(device) / 255.0
+    img = img.permute(2, 0, 1).unsqueeze(0)  # (1, 3, H, W) tensor
     
-    layer_names = net.getLayerNames()
-    output_layers = [layer_names[i - 1] for i in net.getUnconnectedOutLayers()]
-    outputs = net.forward(output_layers)
-
-    boxes = []
-    confidences = []
-    class_ids = []
-
-    for output in outputs:
-        for detection in output:
-            scores = detection[5:]
-            class_id = np.argmax(scores)
-            confidence = scores[class_id]
-
-            if confidence > conf_threshold:
-                center_x = int(detection[0] * frame.shape[1])
-                center_y = int(detection[1] * frame.shape[0])
-                w = int(detection[2] * frame.shape[1])
-                h = int(detection[3] * frame.shape[0])
-
-                x = int(center_x - w/2)
-                y = int(center_y - h/2)
-
-                boxes.append([x, y, w, h])
-                confidences.append(float(confidence))
-                class_ids.append(class_id)
-
-    indices = cv2.dnn.NMSBoxes(boxes, confidences, conf_threshold, nms_threshold)
+    with torch.no_grad():
+        pred = model(img)
+        detections = non_max_suppression(pred, conf_threshold, nms_threshold)[0]
     
-    return ([boxes[i] for i in indices], 
-            [class_ids[i] for i in indices],
-            [confidences[i] for i in indices]) if len(indices) > 0 else ([], [], [])
+    boxes, confidences, class_ids = [], [], []
+    if detections is not None:
+        detections[:, :4] = scale_coords(img.shape[2:], detections[:, :4], frame.shape).round()
+
+        for det in detections:
+            x1, y1, x2, y2, conf, cls = det.cpu().numpy()
+            boxes.append([int(x1), int(y1), int(x2 - x1), int(y2 - y1)])
+            confidences.append(float(conf))
+            class_ids.append(int(cls))
+
+    return boxes, class_ids, confidences
 
 def process_video(task_id, input_path, output_path, conf_threshold, nms_threshold):
-    """Process video with object detection and tracking."""
+    """Process video with object detection & tracking."""
     try:
         cap = cv2.VideoCapture(input_path)
         
-        # Get video properties
         frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         fps = int(cap.get(cv2.CAP_PROP_FPS))
         total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         
-        # Initialize video writer
         output_video = cv2.VideoWriter(
             output_path,
             cv2.VideoWriter_fourcc(*'mp4v'),
@@ -84,22 +69,21 @@ def process_video(task_id, input_path, output_path, conf_threshold, nms_threshol
             (frame_width, frame_height)
         )
 
-        # Initialize tracking variables
         tracking_objects = {}
         track_id = 0
-        
         frame_count = 0
+
         while cap.isOpened():
             ret, frame = cap.read()
             if not ret:
                 break
-                
+
             frame_count += 1
             center_points_cur_frame = []
 
             # Detect objects
             boxes, class_ids, confidences = detect_objects(frame, conf_threshold, nms_threshold)
-            
+
             # Process detections
             for i, box in enumerate(boxes):
                 x, y, w, h = box
@@ -107,7 +91,6 @@ def process_video(task_id, input_path, output_path, conf_threshold, nms_threshol
                 cy = int((y + y + h) / 2)
                 center_points_cur_frame.append((cx, cy))
 
-                # Draw detection box and label
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 label = f"{class_names[class_ids[i]]}: {confidences[i]:.2f}"
                 cv2.putText(frame, label, (x, y - 10),
@@ -119,7 +102,7 @@ def process_video(task_id, input_path, output_path, conf_threshold, nms_threshol
                 same_object_detected = False
                 for obj_id, prev_pt in tracking_objects.items():
                     distance = math.hypot(prev_pt[0] - pt[0], prev_pt[1] - pt[1])
-                    if distance < 35:  # Tracking threshold
+                    if distance < 35:
                         new_tracking_objects[obj_id] = pt
                         same_object_detected = True
                         break
@@ -146,7 +129,7 @@ def process_video(task_id, input_path, output_path, conf_threshold, nms_threshol
         cap.release()
         output_video.release()
         tasks[task_id]['complete'] = True
-        
+
     except Exception as e:
         tasks[task_id]['error'] = str(e)
         raise
@@ -167,17 +150,14 @@ def upload_video():
         return jsonify({'success': False, 'message': 'No selected file'})
 
     try:
-        # Get parameters
         conf_threshold = float(request.form.get('confidenceThreshold', 0.5))
         nms_threshold = float(request.form.get('nmsThreshold', 0.4))
 
-        # Save video
         task_id = str(uuid.uuid4())
         video_path = os.path.join(UPLOAD_FOLDER, f'{task_id}.mp4')
         output_path = os.path.join(OUTPUT_FOLDER, f'{task_id}_processed.mp4')
         video_file.save(video_path)
         
-        # Initialize task
         tasks[task_id] = {
             'video_path': video_path,
             'output_path': output_path,
@@ -186,7 +166,6 @@ def upload_video():
             'error': None
         }
 
-        # Start processing thread
         threading.Thread(
             target=process_video,
             args=(task_id, video_path, output_path, conf_threshold, nms_threshold)
