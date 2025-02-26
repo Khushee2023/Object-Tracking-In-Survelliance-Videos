@@ -17,7 +17,7 @@ Vision-X is a powerful web-based computer vision application integrating multipl
 - **Frontend**: HTML, CSS, JavaScript  
 - **Backend**: Flask (Python)  
 - **Deep Learning**: OpenCV, PyTorch, YOLO models  
-- **Deployment**: *(To be updated based on your final choice)*  
+- **Deployment**: 
 
 ## 📂 Project Structure  
 ```bash
